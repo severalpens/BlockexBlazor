@@ -36,13 +36,13 @@ namespace BlockexBlazor
     {
               
       // requires using Microsoft.Extensions.Options
-      services.Configure<BookstoreDatabaseSettings>(
-          Configuration.GetSection(nameof(BookstoreDatabaseSettings)));
+      services.Configure<MongodbDatabaseSettings>(
+          Configuration.GetSection(nameof(MongodbDatabaseSettings)));
 
-      services.AddSingleton<IBookstoreDatabaseSettings>(sp =>
-          sp.GetRequiredService<IOptions<BookstoreDatabaseSettings>>().Value);
+      services.AddSingleton<IMongodbDatabaseSettings>(sp =>
+          sp.GetRequiredService<IOptions<MongodbDatabaseSettings>>().Value);
 
-      services.AddSingleton<BookService>();
+      services.AddSingleton<MongodbService>();
 
 
       // services.AddControllers()
@@ -53,8 +53,8 @@ namespace BlockexBlazor
               Configuration.GetConnectionString("DefaultConnection")));
 
 
-      services.AddDbContext<BlockexBlazorContext>(options =>
-              options.UseSqlServer(Configuration.GetConnectionString("BlockexBlazorContext")));
+       services.AddDbContext<BlockexBlazorContext>(options =>
+            options.UseNpgsql(Configuration.GetConnectionString("RenderPostgreSQL")));
 
 
 

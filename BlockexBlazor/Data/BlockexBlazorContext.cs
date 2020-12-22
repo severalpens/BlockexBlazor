@@ -14,6 +14,6 @@ namespace BlockexBlazor.Data
         {
         }
 
-        public DbSet<BlockexBlazor.Models.Book> Book { get; set; }
+        public DbSet<BlockexBlazor.Models.SourceHeader> SourceHeaders { get; set; }
     }
 }
