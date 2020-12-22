@@ -1,38 +1,29 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using BlockexBlazor.Models;
+using BlockexBlazor.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using BlockexBlazor.Data;
-using BlockexBlazor.Models;
+using System.Collections.Generic;
 
-namespace BlockexBlazor
+namespace BlockexBlazor.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
     public class BooksController : ControllerBase
     {
-        private readonly BlockexBlazorContext _context;
+        private readonly BookService _bookService;
 
-        public BooksController(BlockexBlazorContext context)
+        public BooksController(BookService bookService)
         {
-            _context = context;
+            _bookService = bookService;
         }
 
-        // GET: api/Books
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Book>>> GetBook()
-        {
-            return await _context.Book.ToListAsync();
-        }
+        public ActionResult<List<Book>> Get() =>
+            _bookService.Get();
 
-        // GET: api/Books/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Book>> GetBook(string id)
+        [HttpGet("{id:length(24)}", Name = "GetBook")]
+        public ActionResult<Book> Get(string id)
         {
-            var book = await _context.Book.FindAsync(id);
+            var book = _bookService.Get(id);
 
             if (book == null)
             {
@@ -42,81 +33,42 @@ namespace BlockexBlazor
             return book;
         }
 
-        // PUT: api/Books/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBook(string id, Book book)
-        {
-            if (id != book.Id)
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(book).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!BookExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            return NoContent();
-        }
-
-        // POST: api/Books
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Book>> PostBook(Book book)
+        public ActionResult<Book> Create(Book book)
         {
-            _context.Book.Add(book);
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                if (BookExists(book.Id))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            _bookService.Create(book);
 
-            return CreatedAtAction("GetBook", new { id = book.Id }, book);
+            return CreatedAtRoute("GetBook", new { id = book.Id.ToString() }, book);
         }
 
-        // DELETE: api/Books/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBook(string id)
+        [HttpPut("{id:length(24)}")]
+        public IActionResult Update(string id, Book bookIn)
         {
-            var book = await _context.Book.FindAsync(id);
+            var book = _bookService.Get(id);
+
             if (book == null)
             {
                 return NotFound();
             }
 
-            _context.Book.Remove(book);
-            await _context.SaveChangesAsync();
+            _bookService.Update(id, bookIn);
 
             return NoContent();
         }
 
-        private bool BookExists(string id)
+        [HttpDelete("{id:length(24)}")]
+        public IActionResult Delete(string id)
         {
-            return _context.Book.Any(e => e.Id == id);
+            var book = _bookService.Get(id);
+
+            if (book == null)
+            {
+                return NotFound();
+            }
+
+            _bookService.Remove(book.Id);
+
+            return NoContent();
         }
     }
 }

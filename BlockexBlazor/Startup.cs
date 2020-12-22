@@ -34,9 +34,6 @@ namespace BlockexBlazor
     // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
     public void ConfigureServices(IServiceCollection services)
     {
-      services.AddDbContext<ApplicationDbContext>(options =>
-          options.UseSqlServer(
-              Configuration.GetConnectionString("DefaultConnection")));
               
       // requires using Microsoft.Extensions.Options
       services.Configure<BookstoreDatabaseSettings>(
@@ -47,6 +44,20 @@ namespace BlockexBlazor
 
       services.AddSingleton<BookService>();
 
+
+      // services.AddControllers()
+      //     .AddNewtonsoftJson(options => options.UseMemberCasing());
+
+      services.AddDbContext<ApplicationDbContext>(options =>
+          options.UseSqlServer(
+              Configuration.GetConnectionString("DefaultConnection")));
+
+
+      services.AddDbContext<BlockexBlazorContext>(options =>
+              options.UseSqlServer(Configuration.GetConnectionString("BlockexBlazorContext")));
+
+
+
       services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
           .AddEntityFrameworkStores<ApplicationDbContext>();
       services.AddRazorPages();
@@ -54,9 +65,6 @@ namespace BlockexBlazor
       services.AddScoped<AuthenticationStateProvider, RevalidatingIdentityAuthenticationStateProvider<IdentityUser>>();
       services.AddDatabaseDeveloperPageExceptionFilter();
       services.AddSingleton<WeatherForecastService>();
-
-      services.AddDbContext<BlockexBlazorContext>(options =>
-              options.UseSqlServer(Configuration.GetConnectionString("BlockexBlazorContext")));
 
     }
 
