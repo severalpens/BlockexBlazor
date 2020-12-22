@@ -1,5 +1,7 @@
 using BlockexBlazor.Areas.Identity;
 using BlockexBlazor.Data;
+using BlockexBlazor.Models;
+using BlockexBlazor.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -11,6 +13,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -34,6 +37,14 @@ namespace BlockexBlazor
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
+                     // requires using Microsoft.Extensions.Options
+    services.Configure<BookstoreDatabaseSettings>(
+        Configuration.GetSection(nameof(BookstoreDatabaseSettings)));
+
+    services.AddSingleton<IBookstoreDatabaseSettings>(sp =>
+        sp.GetRequiredService<IOptions<BookstoreDatabaseSettings>>().Value);
+        services.AddSingleton<BookService>();
+
             services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             services.AddRazorPages();
