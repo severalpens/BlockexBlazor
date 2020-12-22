@@ -1,0 +1,5 @@
+https://dotnet.microsoft.com/learn/aspnet/blazor-tutorial/run
+https://docs.microsoft.com/en-us/aspnet/core/tutorials/first-mongo-app?view=aspnetcore-5.0&tabs=visual-studio
+https://medium.com/@RobertKhou/asp-net-core-mvc-identity-using-postgresql-database-bc52255f67c4
+https://docs.microsoft.com/en-us/ef/core/get-started/overview/first-app?tabs=netcore-cli
+https://www.npgsql.org/efcore/modeling/table-column-naming.html
